@@ -63,6 +63,7 @@ public class OkHttpActivity extends RxActivity {
      * @return
      */
     private void testFaceApi(@NonNull String imagePath1, @NonNull String imagePath2){
+        //PrivateConstant里面声明的私有api_id,需要自己到官网申请
         mFaceApi.compare(convert(PrivateConstant.FACE_API_ID),
                          convert(PrivateConstant.FACE_API_SECRET),
                          convert("image_file1", new File(imagePath1)),
