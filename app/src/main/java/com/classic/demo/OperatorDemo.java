@@ -1,10 +1,6 @@
 package com.classic.demo;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 
 import com.classic.android.BasicProject;
 import com.classic.android.base.RxActivity;
@@ -15,21 +11,18 @@ import com.elvishew.xlog.XLog;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -39,7 +32,7 @@ import io.reactivex.schedulers.Schedulers;
  * 创建时间: 2016/12/6 16:18
  */
 @SuppressWarnings("All")
-public class RxJava2Activity extends RxActivity {
+public class OperatorDemo extends RxActivity {
 
     @Override public int getLayoutResId() {
         return R.layout.activity_main;
@@ -144,88 +137,37 @@ public class RxJava2Activity extends RxActivity {
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
-    public interface ViewController {
-        void addImage(Bitmap bitmap);
-    }
-    private ViewController mViewController;
-    private final String mPath = Environment.getExternalStorageDirectory() + "/images/";
-    private void demo() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final File[] rootFiles = new File(mPath).listFiles();
-                for (File item : rootFiles) {
-                    File[] subFiles = item.listFiles();
-                    for (File subItem : subFiles) {
-                        if(isImage(subItem)) {
-                            final Bitmap bitmap = file2Bitmap(subItem);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mViewController.addImage(bitmap);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        }).start();
+    /**
+     * time 示例
+     */
+    private Disposable time() {
+        return Observable.timer(10, TimeUnit.MILLISECONDS)
+                         .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+                         .subscribe(new Consumer<Long>() {
+                             @Override
+                             public void accept(Long aLong) throws Exception {
+                                 XLog.d("延迟10毫秒的任务启动");
+                             }
+                         });
     }
 
-    private void demoRxJava() {
-        Observable.fromArray(new File(mPath).listFiles())
-                  .flatMap(new Function<File, ObservableSource<File>>() {
-                      @Override
-                      public ObservableSource<File> apply(File file) throws Exception {
-                          return Observable.fromArray(file.listFiles());
-                      }
-                  })
-                  .filter(new Predicate<File>() {
-                      @Override
-                      public boolean test(File file) throws Exception {
-                          return isImage(file);
-                      }
-                  })
-                  .map(new Function<File, Bitmap>() {
-                      @Override
-                      public Bitmap apply(File file) throws Exception {
-                          return file2Bitmap(file);
-                      }
-                  })
-                  .compose(RxUtil.<Bitmap>applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
-                  .subscribe(new Consumer<Bitmap>() {
-                      @Override
-                      public void accept(Bitmap bitmap) throws Exception {
-                          mViewController.addImage(bitmap);
-                      }
-                  });
-
-    }
-
-    private void demoByLambda() {
-        Observable.fromArray(new File(mPath).listFiles())
-                  .flatMap((file) -> Observable.fromArray(file.listFiles()))
-                  .filter(file -> isImage(file))
-                  .map(file -> file2Bitmap(file))
-                  .compose(RxUtil.applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
-                  .subscribe(bitmap -> mViewController.addImage(bitmap));
-    }
-
-
-    private boolean isImage(@NonNull File file) {
-        return file.isFile() && (file.getName().toLowerCase().endsWith(".jpg") ||
-                                 file.getName().toLowerCase().endsWith(".png"));
-    }
-    private Bitmap file2Bitmap(@NonNull File file) {
-        return BitmapFactory.decodeFile(file.getPath());
+    /**
+     * interval 示例
+     */
+    private Disposable interval(long period, TimeUnit timeUnit, Consumer<Long> onNext) {
+        return Observable.interval(1, TimeUnit.SECONDS)
+                         .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+                         .subscribe(new Consumer<Long>() {
+                             @Override
+                             public void accept(Long aLong) throws Exception {
+                                 XLog.d("每隔1秒的定时任务启动");
+                             }
+                         });
     }
 
     private static final Observer<Integer> OBSERVER = new Observer<Integer>() {
-        private Disposable d;
         @Override public void onSubscribe(Disposable d) {
-            this.d = d;
             XLog.d("onSubscribe");
-            XLog.d("onSubscribe - isDisposed"+d.isDisposed());
         }
 
         @Override public void onNext(Integer value) {
@@ -238,7 +180,6 @@ public class RxJava2Activity extends RxActivity {
 
         @Override public void onComplete() {
             XLog.d("onComplete");
-            XLog.d("onComplete - isDisposed"+d.isDisposed());
         }
     };
 
