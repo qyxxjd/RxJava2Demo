@@ -3,14 +3,17 @@
 
 | 描述 | RxJava 1.X | RxJava 2.X |
 | ----- | ----- | ----- |
-| `package`包名| `rx.xxx` | `io.reactivex.xxx` |
+|`package`包名| `rx.xxx` | `io.reactivex.xxx` |
 | [Reactive Streams规范](http://www.reactive-streams.org/) | `1.X`早于`Reactive Streams`规范出现，仅部分支持规范 | 完全支持 |
-| [Backpressure 背压](https://github.com/ReactiveX/RxJava/wiki/Backpressure)|对背压的支持不完善|`Oberservable`设计为不支持背压<br>新增`Flowable`支持背压|
-| `null`空值| 支持 | 不再支持`null`值，传入`null`值会抛出 `NullPointerException` |
-| `Schedulers`线程调度器| - | 移除`Schedulers.immediate()`<br>新增`Schedulers.single()` |
-| `Single`| 行为类似`Observable`，但只会发射一个`onSuccess`或`onError` | 按照`Reactive Streams`规范重新设计，遵循协议`onSubscribe(onSuccess/onError)` |
-| `Completable`| 行为类似`Observable`，要么全部成功，要么就失败 | 按照`Reactive Streams`规范重新设计，遵循协议`onSubscribe (onComplete/onError)` |
-| `Maybe`| 无 | `2.X`新增，行为类似`Observable`，可能会有一个数据或一个错误，也可能什么都没有。可以将其视为一种返回可空值的方法。这种方法如果不抛出异常的话，将总是会返回一些东西，但是返回值可能为空，也可能不为空。按照`Reactive Streams`规范设计，遵循协议`onSubscribe (onSuccess/onError/onComplete)` |
+|[Backpressure 背压](https://github.com/ReactiveX/RxJava/wiki/Backpressure)|对背压的支持不完善|`Oberservable`设计为不支持背压<br>新增`Flowable`支持背压|
+|`null`空值| 支持 | 不再支持`null`值，传入`null`值会抛出 `NullPointerException` |
+|`Schedulers`线程调度器| `Schedulers.immediate()`<br>`Schedulers.trampoline()`<br>`Schedulers.computation()`<br>`Schedulers.newThread()`<br>`Schedulers.io()`<br>`Schedulers.from(executor)`<br>`AndroidSchedulers.mainThread()` | 移除`Schedulers.immediate()`<br>新增`Schedulers.single()`<br>其它未变 |
+|`Single`| 行为类似`Observable`，但只会发射一个`onSuccess`或`onError` | 按照`Reactive Streams`规范重新设计，遵循协议`onSubscribe(onSuccess/onError)` |
+|`Completable`| 行为类似`Observable`，要么全部成功，要么就失败 | 按照`Reactive Streams`规范重新设计，遵循协议`onSubscribe (onComplete/onError)` |
+|`Maybe`| 无 | `2.X`新增，行为类似`Observable`，可能会有一个数据或一个错误，也可能什么都没有。可以将其视为一种返回可空值的方法。这种方法如果不抛出异常的话，将总是会返回一些东西，但是返回值可能为空，也可能不为空。按照`Reactive Streams`规范设计，遵循协议`onSubscribe (onSuccess/onError/onComplete)` |
+|`Flowable`| 无 | `2.X`新增，行为类似`Observable`，按照`Reactive Streams`规范设计，支持背压`Backpressure` |
+|`Subject`| `AsyncSubject`<br>`BehaviorSubject`<br>`PublishSubject`<br>`ReplaySubject`<br>`UnicastSubject` | `2.X`依然维护这些`Subject`现有的功能，并新增：<br>`AsyncProcessor`<br>`BehaviorProcessor`<br>`PublishProcessor`<br>`ReplayProcessor`<br>`UnicastProcessor`<br>支持背压`Backpressure` |
+|`Subscriber`| `Subscriber` | 由于与`Reactive Streams`的命名冲突，`Subscriber`已重命名为`Disposable` |
 
 
 
