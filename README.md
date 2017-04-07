@@ -5,7 +5,7 @@
 | ----- | ----- | ----- |
 |`package`包名| `rx.xxx` | `io.reactivex.xxx` |
 | [Reactive Streams规范](http://www.reactive-streams.org/) | `1.X`早于`Reactive Streams`规范出现，仅部分支持规范 | 完全支持 |
-|[Backpressure 背压](https://github.com/ReactiveX/RxJava/wiki/Backpressure)|对背压的支持不完善|`Oberservable`设计为不支持背压<br>新增`Flowable`支持背压|
+|[Backpressure 背压](https://github.com/ReactiveX/RxJava/wiki/Backpressure)|对背压的支持不完善|`Observable`设计为不支持背压<br>新增`Flowable`支持背压|
 |`null`空值| 支持 | 不再支持`null`值，传入`null`值会抛出 `NullPointerException` |
 |`Schedulers`线程调度器| `Schedulers.immediate()`<br>`Schedulers.trampoline()`<br>`Schedulers.computation()`<br>`Schedulers.newThread()`<br>`Schedulers.io()`<br>`Schedulers.from(executor)`<br>`AndroidSchedulers.mainThread()` | 移除`Schedulers.immediate()`<br>新增`Schedulers.single()`<br>其它未变 |
 |`Single`| 行为类似`Observable`，但只会发射一个`onSuccess`或`onError` | 按照`Reactive Streams`规范重新设计，遵循协议`onSubscribe(onSuccess/onError)` |
