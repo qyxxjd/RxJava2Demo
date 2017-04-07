@@ -43,6 +43,13 @@ public class OperatorDemo extends RxActivity {
         BasicProject.config(new BasicProject.Builder().setLog(BuildConfig.DEBUG ?
                                                               LogLevel.ALL : LogLevel.NONE));
         create();
+
+        // recycle()方法用于回收Disposable, 释放资源
+        recycle(fromArray());
+        recycle(fromCallable());
+        recycle(time());
+        recycle(interval());
+        // recycle(...);
     }
 
     /**
@@ -52,10 +59,12 @@ public class OperatorDemo extends RxActivity {
         Observable.create(new ObservableOnSubscribe<Integer>() {
                       @Override public void subscribe(ObservableEmitter<Integer> emitter)
                               throws Exception {
-                          for (int i = 0; i < 10; i++) {
-                              emitter.onNext(i);
+                          if (!emitter.isDisposed()) {
+                              for (int i = 0; i < 10; i++) {
+                                  emitter.onNext(i);
+                              }
+                              emitter.onComplete();
                           }
-                          emitter.onComplete();
                       }
                   })
                   .subscribeOn(Schedulers.io())
@@ -113,6 +122,7 @@ public class OperatorDemo extends RxActivity {
                                  s.onNext(7);
                                  s.onNext(8);
                                  s.onNext(9);
+                                 s.onComplete();
                              }
                          })
                          .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
@@ -154,7 +164,7 @@ public class OperatorDemo extends RxActivity {
     /**
      * interval 示例
      */
-    private Disposable interval(long period, TimeUnit timeUnit, Consumer<Long> onNext) {
+    private Disposable interval() {
         return Observable.interval(1, TimeUnit.SECONDS)
                          .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
                          .subscribe(new Consumer<Long>() {

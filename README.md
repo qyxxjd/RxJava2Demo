@@ -96,17 +96,19 @@
 ```
 
 
-#### `RxJava 2.X` 简单示例：
+#### `RxJava 2.X` 简单示例： [查看代码](https://github.com/qyxxjd/RxJava2Demo/blob/master/app/src/main/java/com/classic/demo/OperatorDemo.java)
 
 `create`操作符
 ```java
     Observable.create(new ObservableOnSubscribe<Integer>() {
                   @Override public void subscribe(ObservableEmitter<Integer> emitter)
                           throws Exception {
-                      for (int i = 0; i < 10; i++) {
-                          emitter.onNext(i);
+                      if (!emitter.isDisposed()) {
+                          for (int i = 0; i < 10; i++) {
+                              emitter.onNext(i);
+                          }
+                          emitter.onComplete();
                       }
-                      emitter.onComplete();
                   }
               })
               .subscribeOn(Schedulers.io())
@@ -156,6 +158,7 @@
                       s.onNext(7);
                       s.onNext(8);
                       s.onNext(9);
+                      s.onComplete();
                   }
               })
               .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
