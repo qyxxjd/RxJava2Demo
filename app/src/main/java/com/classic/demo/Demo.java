@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
-import com.classic.android.rx.RxUtil;
+import com.classic.android.rx.RxTransformer;
 
 import java.io.File;
 
@@ -70,7 +70,7 @@ public class Demo extends Activity{
                           return file2Bitmap(file);
                       }
                   })
-                  .compose(RxUtil.<Bitmap>applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
+                  .compose(RxTransformer.<Bitmap>applySchedulers(RxTransformer.Observable.IO_ON_UI))
                   .subscribe(new Consumer<Bitmap>() {
                       @Override
                       public void accept(Bitmap bitmap) throws Exception {
@@ -85,7 +85,7 @@ public class Demo extends Activity{
                   .flatMap((file) -> Observable.fromArray(file.listFiles()))
                   .filter(file -> isImage(file))
                   .map(file -> file2Bitmap(file))
-                  .compose(RxUtil.applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
+                  .compose(RxTransformer.<Bitmap>applySchedulers(RxTransformer.Observable.IO_ON_UI))
                   .subscribe(bitmap -> mViewController.addImage(bitmap));
     }
 

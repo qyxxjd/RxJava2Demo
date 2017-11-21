@@ -12,6 +12,7 @@ import retrofit2.http.Part;
  * 创 建 人: 续写经典
  * 创建时间: 2016/12/6 16:18
  */
+@SuppressWarnings("SpellCheckingInspection")
 public interface FaceApi {
 
     @Multipart

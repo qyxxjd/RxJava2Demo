@@ -71,7 +71,7 @@
                          convert("image_file1", new File(imagePath1)),
                          convert("image_file2", new File(imagePath2)))
                 //1.线程切换的封装
-                .compose(RxUtil.<String>applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
+                .compose(RxTransformer.<String>applySchedulers(RxTransformer.Observable.IO_ON_UI))
                 //2.当前Activity onStop时自动取消请求
                 .compose(this.<String>bindEvent(ActivityEvent.STOP))
                 //3.原始数据转换为对象
@@ -124,7 +124,7 @@
 ```java
     Observable.fromArray(1, 2, 3, 4, 5)
               //使用变换将线程控制的代码封装起来，使代码更简洁，也便于管理
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
@@ -135,7 +135,7 @@
                       return 123;
                   }
               })
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
@@ -146,7 +146,7 @@
     list.add(456);
     list.add(789);
     Observable.fromIterable(list)
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
@@ -161,28 +161,28 @@
                       s.onComplete();
                   }
               })
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
 `just`操作符
 ```java
     Observable.just(1, 2, 3, 4, 5, 6)
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
 `range`操作符
 ```java
     Observable.range(100, 60)
-              .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+              .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
               .subscribeWith(DISPOSABLE_OBSERVER);
 ```
 
 `timer`操作符
 ```java
     Observable.timer(10, TimeUnit.MILLISECONDS)
-              .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+              .compose(RxTransformer.<Long>applySchedulers(RxTransformer.Observable.COMPUTATION))
               .subscribe(new Consumer<Long>() {
                   @Override
                   public void accept(Long aLong) throws Exception {
@@ -194,7 +194,7 @@
 `interval`操作符
 ```java
     Observable.interval(1, TimeUnit.SECONDS)
-              .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+              .compose(RxTransformer.<Long>applySchedulers(RxTransformer.Observable.COMPUTATION))
               .subscribe(new Consumer<Long>() {
                   @Override
                   public void accept(Long aLong) throws Exception {

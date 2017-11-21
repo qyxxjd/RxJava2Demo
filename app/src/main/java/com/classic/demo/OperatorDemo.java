@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.classic.android.BasicProject;
 import com.classic.android.base.RxActivity;
-import com.classic.android.rx.RxUtil;
+import com.classic.android.rx.RxTransformer;
 import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
 
@@ -82,7 +82,7 @@ public class OperatorDemo extends RxActivity {
     private Disposable fromArray() {
         return Observable.fromArray(1, 2, 3, 4, 5)
                          //使用变换将线程控制的代码封装起来，使代码更简洁，也便于管理
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -95,7 +95,7 @@ public class OperatorDemo extends RxActivity {
                                  return 123;
                              }
                          })
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -108,7 +108,7 @@ public class OperatorDemo extends RxActivity {
         list.add(456);
         list.add(789);
         return Observable.fromIterable(list)
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -125,7 +125,7 @@ public class OperatorDemo extends RxActivity {
                                  s.onComplete();
                              }
                          })
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -134,7 +134,7 @@ public class OperatorDemo extends RxActivity {
      */
     private Disposable just() {
         return Observable.just(1, 2, 3, 4, 5, 6)
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -143,7 +143,7 @@ public class OperatorDemo extends RxActivity {
      */
     private Disposable range() {
         return Observable.range(100, 60)
-                         .compose(RxUtil.<Integer>applySchedulers(RxUtil.IO_TRANSFORMER))
+                         .compose(RxTransformer.<Integer>applySchedulers(RxTransformer.Observable.IO))
                          .subscribeWith(DISPOSABLE_OBSERVER);
     }
 
@@ -152,7 +152,7 @@ public class OperatorDemo extends RxActivity {
      */
     private Disposable time() {
         return Observable.timer(10, TimeUnit.MILLISECONDS)
-                         .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+                         .compose(RxTransformer.<Long>applySchedulers(RxTransformer.Observable.COMPUTATION))
                          .subscribe(new Consumer<Long>() {
                              @Override
                              public void accept(Long aLong) throws Exception {
@@ -166,7 +166,7 @@ public class OperatorDemo extends RxActivity {
      */
     private Disposable interval() {
         return Observable.interval(1, TimeUnit.SECONDS)
-                         .compose(RxUtil.<Long>applySchedulers(RxUtil.COMPUTATION_TRANSFORMER))
+                         .compose(RxTransformer.<Long>applySchedulers(RxTransformer.Observable.COMPUTATION))
                          .subscribe(new Consumer<Long>() {
                              @Override
                              public void accept(Long aLong) throws Exception {

@@ -7,7 +7,7 @@ import com.classic.android.BasicProject;
 import com.classic.android.base.RxActivity;
 import com.classic.android.consts.MIME;
 import com.classic.android.event.ActivityEvent;
-import com.classic.android.rx.RxUtil;
+import com.classic.android.rx.RxTransformer;
 import com.classic.android.utils.SDCardUtil;
 import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
@@ -64,7 +64,6 @@ public class HttpDemo extends RxActivity {
      *
      * @param imagePath1 需要比对的照片1
      * @param imagePath2 需要比对的照片2
-     * @return
      */
     private void testFaceApi(@NonNull String imagePath1, @NonNull String imagePath2) {
         //PrivateConstant里面声明的私有api_id,需要自己到官网申请
@@ -73,7 +72,7 @@ public class HttpDemo extends RxActivity {
                          convert("image_file1", new File(imagePath1)),
                          convert("image_file2", new File(imagePath2)))
                 //1.线程切换的封装
-                .compose(RxUtil.<String>applySchedulers(RxUtil.IO_ON_UI_TRANSFORMER))
+                .compose(RxTransformer.<String>applySchedulers(RxTransformer.Observable.IO_ON_UI))
                 //2.当前Activity onStop时自动取消请求
                 .compose(this.<String>bindEvent(ActivityEvent.STOP))
                 //3.原始数据转换为对象
@@ -101,8 +100,7 @@ public class HttpDemo extends RxActivity {
                 @Override
                 public IdentifyResult apply(String s) throws Exception {
                     if (null != s) {
-                        return new Gson().fromJson(s, new TypeToken<IdentifyResult>() {
-                        }.getType());
+                        return new Gson().fromJson(s, new TypeToken<IdentifyResult>(){}.getType());
                     }
                     return null;
                 }
